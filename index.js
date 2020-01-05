@@ -122,7 +122,7 @@ function HttpStatusAccessory(log, config) {
     }
 
     // AMBILIGHT
-	this.status_url_ambilight = this.base_url + "/ambilight";
+	this.status_url_ambilight = this.base_url + "/ambilight/power";
 
 	this.on_url_ambilight = this.base_url + "/ambilight/currentconfiguration";
 	this.on_body_ambilight = JSON.stringify({
@@ -550,7 +550,18 @@ HttpStatusAccessory.prototype = {
                     console.log(responseBodyParsed)
 					if (responseBodyParsed && responseBodyParsed.power) {
                         powerState = (responseBodyParsed.power == "On") ? 1 : 0;
-					}
+                        
+                        that.httpRequest(this.on_url_ambilight, "", "GET", this.need_authentication, function(error, response, responseBody) {
+                            if (!error) {
+                                if (responseBody) {
+                                    var responseBodyParsed = JSON.parse(responseBody);
+                                    console.log(responseBodyParsed)
+                                }
+                            }
+                        }
+                    .bind(this));
+                }
+                
 				}
 			} else {
 				that.log('getAmbilightState - actual mode - failed: %s', error.message);
