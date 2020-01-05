@@ -1,6 +1,6 @@
 {
   "name": "homebridge-philipstv-oled",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Homebridge module for the Philips TV OLED803",
   "main": "index.js",
   "scripts": {
