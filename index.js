@@ -685,17 +685,18 @@ HttpStatusAccessory.prototype = {
             .on('set', this.setAmbilightState.bind(this));
 
         //Warm red ambilight
-        this.hotLavaAccessory = new Accessory(this.name + " Hot Lava Light",'00000043-0000-1000-8000-0026BB765292');
+        // this.hotLavaAccessory = new Accessory(this.name + " Hot Lava Light",'00000043-0000-1000-8000-0026BB765292');
         this.hotLavaService = new Service.Lightbulb(this.name + " Hot Lava Light")
+        this.hotLavaService.UUID = '00000043-0000-1000-8000-0026BB765292'
         this.hotLavaService
             .getCharacteristic(Characteristic.On)
             .on('get', this.getHotLavaState.bind(this))
             .on('set', this.setHotLavaState.bind(this));
-            this.hotLavaAccessory.addService(this.hotLavaService)
+            // this.hotLavaAccessory.addService(this.hotLavaService)
             
 
         
 
-        return [informationService, this.televisionService, this.switchService, this.ambilightService, this.hotLavaAccessory.getService(Service.Lightbulb)];
+        return [informationService, this.televisionService, this.switchService, this.ambilightService, this.hotLavaService];
     }
 };
