@@ -570,13 +570,13 @@ HttpStatusAccessory.prototype = {
 
         var url = (ambilightState) ? this.on_url_ambilight : this.off_url_ambilight;
         var body = (ambilightState) ? this.on_body_hot_lava : this.off_body_ambilight;
-        that.log("setAmbilightState - setting state to %s", ambilightState ? "ON" : "OFF");
+        that.log("setHotLavaState - setting state to %s", ambilightState ? "ON" : "OFF");
         that.httpRequest(url, body, "POST", this.need_authentication, function (error, response, responseBody) {
             if (error) {
-                that.log('setAmbilightState - failed: %s', error.message);
+                that.log('setHotLavaState - failed: %s', error.message);
                 callback(new Error("HTTP attempt failed"), false);
             } else {
-                that.log('setAmbilightState - succeeded - current state: %s', ambilightState);
+                that.log('setHotLavaState - succeeded - current state: %s', ambilightState);
                 callback(null, ambilightState);
             }
         });
