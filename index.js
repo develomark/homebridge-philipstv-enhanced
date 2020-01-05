@@ -529,7 +529,7 @@ HttpStatusAccessory.prototype = {
             if (!error) {
                 if (responseBody) {
                     var responseBodyParsed = JSON.parse(responseBody);
-                    console.log(responseBodyParsed)
+                    // console.log(responseBodyParsed)
                     if (responseBodyParsed && responseBodyParsed.power) {
                         powerState = (responseBodyParsed.power == "On") ? 1 : 0;
 
@@ -545,7 +545,7 @@ HttpStatusAccessory.prototype = {
             }
 
             that.state_ambilight = powerState;
-            setTimeout(function () {
+            // setTimeout(function () {
                 that.httpRequest(that.on_url_ambilight, "", "GET", that.need_authentication, function (error, response, responseBody) {
                     if (!error) {
                         if (responseBody) {
@@ -555,7 +555,7 @@ HttpStatusAccessory.prototype = {
                     }
                     callback(null, powerState);
                 }.bind(this));
-            }.bind(this), 800);
+            // }.bind(this), 800);
 
         }.bind(this));
     },
@@ -594,7 +594,7 @@ HttpStatusAccessory.prototype = {
             if (!error) {
                 if (responseBody) {
                     var responseBodyParsed = JSON.parse(responseBody);
-                    console.log(responseBodyParsed)
+                    // console.log(responseBodyParsed)
                     if (responseBodyParsed && responseBodyParsed.power) {
                         powerState = (responseBodyParsed.power == "On") ? 1 : 0;
 
@@ -610,19 +610,17 @@ HttpStatusAccessory.prototype = {
             }
 
             that.state_ambilight = powerState;
-            setTimeout(function () {
+            // setTimeout(function () {
                 that.httpRequest(that.on_url_ambilight, "", "GET", that.need_authentication, function (error, response, responseBody) {
                     if (!error) {
                         if (responseBody) {
                             var responseBodyParsed = JSON.parse(responseBody);
-                    
-                       
                             powerState =  (responseBodyParsed.styleName == "FOLLOW_COLOR") ? 1 : 0;
                         }
                     }
                     callback(null, powerState);
                 }.bind(this));
-            }.bind(this), 800);
+            // }.bind(this), 800);
 
         }.bind(this));
     },
