@@ -551,16 +551,16 @@ HttpStatusAccessory.prototype = {
 					if (responseBodyParsed && responseBodyParsed.power) {
                         powerState = (responseBodyParsed.power == "On") ? 1 : 0;
                         
-                    //     that.httpRequest(this.on_url_ambilight, "", "GET", this.need_authentication, function(error, response, responseBody) {
-                    //         if (!error) {
-                    //             if (responseBody) {
-                    //                 var responseBodyParsed = JSON.parse(responseBody);
-                    //                 console.log(responseBodyParsed)
-                    //             }
-                    //         }
-                    //     }
+                    that.httpRequest(this.on_url_ambilight, "", "GET", this.need_authentication, function(error, response, responseBody) {
+                            if (!error) {
+                                if (responseBody) {
+                                    var responseBodyParsed = JSON.parse(responseBody);
+                                    console.log(responseBodyParsed)
+                                }
+                            }
+                        });
                     // .bind(this));
-                }
+                    }
                 
 				}
 			} else {
@@ -591,7 +591,7 @@ HttpStatusAccessory.prototype = {
 
         this.televisionService = new Service.Television();
 	    this.televisionService
-            .setCharacteristic(Characteristic.ConfiguredName, "TV " + this.name);
+            .setCharacteristic(Characteristic.ConfiguredName, this.name);
 
         // POWER
         // this.televisionService
