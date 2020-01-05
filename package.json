@@ -1,7 +1,7 @@
 {
-  "name": "homebridge-philipstv-knitter",
+  "name": "homebridge-philipstv-oled",
   "version": "0.0.2",
-  "description": "Homebridge module for the Philips TV 49PUS7101 & 75PUS7354",
+  "description": "Homebridge module for the Philips TV OLED803",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
