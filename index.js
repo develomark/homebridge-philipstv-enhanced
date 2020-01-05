@@ -692,10 +692,10 @@ HttpStatusAccessory.prototype = {
             .on('get', this.getHotLavaState.bind(this))
             .on('set', this.setHotLavaState.bind(this));
             this.hotLavaAccessory.addService(this.hotLavaService)
-            this.hotLavaService.UUID = '00000043-0000-1000-8000-0026BB765292'
+            
 
         
 
-        return [informationService, this.televisionService, this.switchService, this.ambilightService, this.hotLavaService];
+        return [informationService, this.televisionService, this.switchService, this.ambilightService, this.hotLavaAccessory.getService(Service.Lightbulb)];
     }
 };
