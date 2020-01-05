@@ -7,6 +7,7 @@ var wol = require('wake_on_lan');
 module.exports = function (homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
+    Accessory = homebridge.platformAccessory;
     homebridge.registerAccessory("homebridge-philipstv-enhanced", "PhilipsTV", HttpStatusAccessory);
 }
 
@@ -684,13 +685,14 @@ HttpStatusAccessory.prototype = {
             .on('set', this.setAmbilightState.bind(this));
 
         //Warm red ambilight
-        this.hotLavaService = new Service.Lightbulb(this.name + " Hot Lava Light",'00000043-0000-1000-8000-0026BB765292');
+        this.hotLavaAccessory = new Accessory(this.name + " Hot Lava Light",'00000043-0000-1000-8000-0026BB765292');
+        this.hotLavaService = new Service.Lightbulb(this.name + " Hot Lava Light")
         this.hotLavaService
             .getCharacteristic(Characteristic.On)
             .on('get', this.getHotLavaState.bind(this))
             .on('set', this.setHotLavaState.bind(this));
-   
+            this.hotLavaAccessory.addService(this.hotLavaService)
 
-        return [informationService, this.televisionService, this.switchService, this.ambilightService, this.hotLavaService];
+        return [informationService, this.televisionService, this.switchService, this.ambilightService, this.hotLavaAccessory];
     }
 };
