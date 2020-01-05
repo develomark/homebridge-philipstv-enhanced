@@ -657,7 +657,7 @@ HttpStatusAccessory.prototype = {
             .getCharacteristic(Characteristic.RemoteKey)
             .on('set', this.sendKey.bind(this));
 
-        this.switchService = new Service.Switch(this.name);
+        this.switchService = new Service.Switch(this.name, '0a');
         this.switchService
             .getCharacteristic(Characteristic.On)
             .on('get', this.getPowerState.bind(this))
@@ -678,7 +678,7 @@ HttpStatusAccessory.prototype = {
         //     .on('set', this.setPreviousInput.bind(this));
 
         // AMBILIGHT
-        this.ambilightService = new Service.Lightbulb(this.name + " Ambilight");
+        this.ambilightService = new Service.Lightbulb(this.name + " Ambilight", '0b');
         this.ambilightService
             .getCharacteristic(Characteristic.On)
             .on('get', this.getAmbilightState.bind(this))
@@ -686,7 +686,7 @@ HttpStatusAccessory.prototype = {
 
         //Warm red ambilight
         // this.hotLavaAccessory = new Accessory(this.name + " Hot Lava Light",'00000043-0000-1000-8000-0026BB765292');
-        this.hotLavaService = new Service.Switch(this.name + " Hot Lava Light", '0b')
+        this.hotLavaService = new Service.Switch(this.name + " Hot Lava Light", '0c')
         // this.hotLavaService.UUID = '00000043-0000-1000-8000-0026BB765292'
         this.hotLavaService
             .getCharacteristic(Characteristic.On)
