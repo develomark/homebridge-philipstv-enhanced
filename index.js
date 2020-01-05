@@ -550,7 +550,7 @@ HttpStatusAccessory.prototype = {
                     if (!error) {
                         if (responseBody) {
                             var responseBodyParsed = JSON.parse(responseBody);
-                            console.log(responseBodyParsed)
+                            powerState =  (responseBodyParsed.styleName == "FOLLOW_VIDEO") ? 1 : 0;
                         }
                     }
                     callback(null, powerState);
@@ -615,7 +615,9 @@ HttpStatusAccessory.prototype = {
                     if (!error) {
                         if (responseBody) {
                             var responseBodyParsed = JSON.parse(responseBody);
-                            console.log(responseBodyParsed)
+                    
+                       
+                            powerState =  (responseBodyParsed.styleName == "FOLLOW_COLOR") ? 1 : 0;
                         }
                     }
                     callback(null, powerState);
@@ -686,7 +688,7 @@ HttpStatusAccessory.prototype = {
 
         //Warm red ambilight
         // this.hotLavaAccessory = new Accessory(this.name + " Hot Lava Light",'00000043-0000-1000-8000-0026BB765292');
-        this.hotLavaService = new Service.Switch(this.name + " Hot Lava Light", '0c')
+        this.hotLavaService = new Service.Lightbulb(this.name + " Hot Lava Light", '0c')
         // this.hotLavaService.UUID = '00000043-0000-1000-8000-0026BB765292'
         this.hotLavaService
             .getCharacteristic(Characteristic.On)
