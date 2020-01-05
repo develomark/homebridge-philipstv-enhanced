@@ -1,10 +1,10 @@
 # homebridge-philipstv-enhanced
 
-Homebridge module for the Philips TV 49PUS7101 & 75PUS7354
+Homebridge module for the Philips Android TV OLED
 
 # Description
 
-Homebridge module for the Philips TV 49PUS7101 & 75PUS7354
+Homebridge module for the Philips Android TV OLED
 
 # Installation
 
