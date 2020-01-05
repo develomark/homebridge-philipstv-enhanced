@@ -92,7 +92,7 @@ function HttpStatusAccessory(log, config) {
             }, "statuspoll");
         }, {
                 longpolling: true,
-                interval: that.interval * 1000,
+                interval: that.interval * 100,
                 longpollEventName: "statuspoll_power"
             });
 
@@ -109,7 +109,7 @@ function HttpStatusAccessory(log, config) {
             }, "statuspoll_ambilight");
         }, {
                 longpolling: true,
-                interval: that.interval * 1000,
+                interval: that.interval * 100,
                 longpollEventName: "statuspoll_ambilight"
             });
 
@@ -130,6 +130,13 @@ function HttpStatusAccessory(log, config) {
         "isExpert": false,
         "menuSetting": "NATURAL"
     });
+
+    this.on_body_hot_lava = JSON.stringify({
+        "styleName": 'FOLLOW_COLOR',
+        "isExpert": false,
+        "menuSetting": 'HOT_LAVA',
+        "stringValue": 'Hot Lava'
+    })
 
     this.off_url_ambilight = this.status_url_ambilight
     this.off_body_ambilight = JSON.stringify({
@@ -524,7 +531,7 @@ HttpStatusAccessory.prototype = {
                     console.log(responseBodyParsed)
                     if (responseBodyParsed && responseBodyParsed.power) {
                         powerState = (responseBodyParsed.power == "On") ? 1 : 0;
-                        
+
                     }
 
                 }
@@ -548,7 +555,72 @@ HttpStatusAccessory.prototype = {
                     callback(null, powerState);
                 }.bind(this));
             }.bind(this), 800);
-            
+
+        }.bind(this));
+    },
+    setHotLavaState: function (ambilightState, callback, context) {
+        var that = this;
+
+        //if context is statuspoll, then we need to ensure that we do not set the actual value
+        if (context && context == "statuspoll") {
+            callback(null, ambilightState);
+            return;
+        }
+
+        var url = (ambilightState) ? this.on_url_ambilight : this.off_url_ambilight;
+        var body = (ambilightState) ? this.on_body_hot_lava : this.off_body_ambilight;
+        that.log("setAmbilightState - setting state to %s", ambilightState ? "ON" : "OFF");
+        that.httpRequest(url, body, "POST", this.need_authentication, function (error, response, responseBody) {
+            if (error) {
+                that.log('setAmbilightState - failed: %s', error.message);
+                callback(new Error("HTTP attempt failed"), false);
+            } else {
+                that.log('setAmbilightState - succeeded - current state: %s', ambilightState);
+                callback(null, ambilightState);
+            }
+        });
+    },
+
+    getHotLavaState: function (callback, context) {
+        var that = this;
+        //if context is not statuspoll, then we need to get the stored value
+        if ((!context || context != "statuspoll_ambilight") && this.switchHandling == "poll") {
+            callback(null, this.state_ambilight);
+            return;
+        }
+        that.httpRequest(this.status_url_ambilight, "", "GET", this.need_authentication, function (error, response, responseBody) {
+            var powerState = 0;
+            if (!error) {
+                if (responseBody) {
+                    var responseBodyParsed = JSON.parse(responseBody);
+                    console.log(responseBodyParsed)
+                    if (responseBodyParsed && responseBodyParsed.power) {
+                        powerState = (responseBodyParsed.power == "On") ? 1 : 0;
+
+                    }
+
+                }
+            } else {
+                that.log('getAmbilightState - actual mode - failed: %s', error.message);
+            }
+
+            if (that.state_ambilight != powerState) {
+                that.log('getAmbilightState - statechange to: %s', powerState);
+            }
+
+            that.state_ambilight = powerState;
+            setTimeout(function () {
+                that.httpRequest(that.on_url_ambilight, "", "GET", that.need_authentication, function (error, response, responseBody) {
+                    if (!error) {
+                        if (responseBody) {
+                            var responseBodyParsed = JSON.parse(responseBody);
+                            console.log(responseBodyParsed)
+                        }
+                    }
+                    callback(null, powerState);
+                }.bind(this));
+            }.bind(this), 800);
+
         }.bind(this));
     },
 
@@ -611,6 +683,13 @@ HttpStatusAccessory.prototype = {
             .on('get', this.getAmbilightState.bind(this))
             .on('set', this.setAmbilightState.bind(this));
 
-        return [informationService, this.televisionService, this.switchService, this.ambilightService];
+        //Warm red ambilight
+        this.hotLavaService = new Service.Lightbulb(this.name + " Hot Lava Light");
+        this.hotLavaService
+            .getCharacteristic(Characteristic.On)
+            .on('get', this.getHotLavaState.bind(this))
+            .on('set', this.setHotLavaState.bind(this));
+
+        return [informationService, this.televisionService, this.switchService, this.ambilightService, this.hotLavaService];
     }
 };
