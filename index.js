@@ -546,7 +546,8 @@ HttpStatusAccessory.prototype = {
 			var powerState = 0;
 			if (!error) {
 				if (responseBody) {
-					var responseBodyParsed = JSON.parse(responseBody);
+                    var responseBodyParsed = JSON.parse(responseBody);
+                    console.log(responseBodyParsed)
 					if (responseBodyParsed && responseBodyParsed.power) {
                         powerState = (responseBodyParsed.power == "On") ? 1 : 0;
 					}
