@@ -686,8 +686,8 @@ HttpStatusAccessory.prototype = {
 
         //Warm red ambilight
         // this.hotLavaAccessory = new Accessory(this.name + " Hot Lava Light",'00000043-0000-1000-8000-0026BB765292');
-        this.hotLavaService = new Service.Lightbulb(this.name + " Hot Lava Light")
-        this.hotLavaService.UUID = '00000043-0000-1000-8000-0026BB765292'
+        this.hotLavaService = new Service.Switch(this.name + " Hot Lava Light")
+        // this.hotLavaService.UUID = '00000043-0000-1000-8000-0026BB765292'
         this.hotLavaService
             .getCharacteristic(Characteristic.On)
             .on('get', this.getHotLavaState.bind(this))
