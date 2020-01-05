@@ -693,6 +693,6 @@ HttpStatusAccessory.prototype = {
             .on('set', this.setHotLavaState.bind(this));
             this.hotLavaAccessory.addService(this.hotLavaService)
 
-        return [informationService, this.televisionService, this.switchService, this.ambilightService, this.hotLavaAccessory];
+        return [informationService, this.televisionService, this.switchService, this.ambilightService, this.hotLavaService];
     }
 };
