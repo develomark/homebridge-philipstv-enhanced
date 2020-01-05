@@ -92,7 +92,7 @@ function HttpStatusAccessory(log, config) {
             }, "statuspoll");
         }, {
             longpolling: true,
-            interval: that.interval * 1000,
+            interval: that.interval, //* 1000,
             longpollEventName: "statuspoll_power"
         });
 
@@ -109,7 +109,7 @@ function HttpStatusAccessory(log, config) {
             }, "statuspoll_ambilight");
         }, {
             longpolling: true,
-            interval: that.interval * 1000,
+            interval: that.interval,// * 1000,
             longpollEventName: "statuspoll_ambilight"
         });
 
@@ -122,7 +122,7 @@ function HttpStatusAccessory(log, config) {
     }
 
     // AMBILIGHT
-	this.status_url_ambilight = this.base_url + "/ambilight/power";
+	this.status_url_ambilight = this.base_url + "/ambilight";
 
 	this.on_url_ambilight = this.base_url + "/ambilight/currentconfiguration";
 	this.on_body_ambilight = JSON.stringify({
