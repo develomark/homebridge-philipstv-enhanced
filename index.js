@@ -689,7 +689,7 @@ HttpStatusAccessory.prototype = {
             .getCharacteristic(Characteristic.On)
             .on('get', this.getHotLavaState.bind(this))
             .on('set', this.setHotLavaState.bind(this));
-            .UUID
+   
 
         return [informationService, this.televisionService, this.switchService, this.ambilightService, this.hotLavaService];
     }
