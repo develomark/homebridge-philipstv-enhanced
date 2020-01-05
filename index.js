@@ -560,6 +560,7 @@ HttpStatusAccessory.prototype = {
                             }
                         });
                     // .bind(this));
+                    callback()
                     }
                 
 				}
