@@ -4,7 +4,7 @@ var request = require("request");
 var pollingtoevent = require('polling-to-event');
 var wol = require('wake_on_lan');
 
-module.exports = function(homebridge) {
+module.exports = function (homebridge) {
     Service = homebridge.hap.Service;
     Characteristic = homebridge.hap.Characteristic;
     homebridge.registerAccessory("homebridge-philipstv-enhanced", "PhilipsTV", HttpStatusAccessory);
@@ -23,9 +23,9 @@ function HttpStatusAccessory(log, config) {
     this.model_year_nr = parseInt(this.model_year);
     this.set_attempt = 0;
     this.has_ssl = config["has_ssl"] || false;
-	this.model_name = config["model_name"];
-	this.model_version = config["model_version"];
-	this.model_serial_no = config["model_serial_no"];
+    this.model_name = config["model_name"];
+    this.model_version = config["model_version"];
+    this.model_serial_no = config["model_serial_no"];
 
     // CREDENTIALS FOR API
     this.username = config["username"] || "";
@@ -86,34 +86,34 @@ function HttpStatusAccessory(log, config) {
 
     // STATUS POLLING
     if (this.switchHandling == "poll") {
-        var statusemitter = pollingtoevent(function(done) {
-            that.getPowerState(function(error, response) {
+        var statusemitter = pollingtoevent(function (done) {
+            that.getPowerState(function (error, response) {
                 done(error, response, that.set_attempt);
             }, "statuspoll");
         }, {
-            longpolling: true,
-            interval: that.interval, //* 1000,
-            longpollEventName: "statuspoll_power"
-        });
+                longpolling: true,
+                interval: that.interval, //* 1000,
+                longpollEventName: "statuspoll_power"
+            });
 
-        statusemitter.on("statuspoll_power", function(data) {
+        statusemitter.on("statuspoll_power", function (data) {
             that.state_power = data;
             if (that.switchService) {
                 that.switchService.getCharacteristic(Characteristic.On).setValue(that.state_power, null, "statuspoll");
             }
         });
 
-        var statusemitter_ambilight = pollingtoevent(function(done) {
-            that.getAmbilightState(function(error, response) {
+        var statusemitter_ambilight = pollingtoevent(function (done) {
+            that.getAmbilightState(function (error, response) {
                 done(error, response, that.set_attempt);
             }, "statuspoll_ambilight");
         }, {
-            longpolling: true,
-            interval: that.interval,// * 1000,
-            longpollEventName: "statuspoll_ambilight"
-        });
+                longpolling: true,
+                interval: that.interval,// * 1000,
+                longpollEventName: "statuspoll_ambilight"
+            });
 
-        statusemitter_ambilight.on("statuspoll_ambilight", function(data) {
+        statusemitter_ambilight.on("statuspoll_ambilight", function (data) {
             that.state_ambilight = data;
             if (that.ambilightService) {
                 that.ambilightService.getCharacteristic(Characteristic.On).setValue(that.state_ambilight, null, "statuspoll_ambilight");
@@ -122,32 +122,32 @@ function HttpStatusAccessory(log, config) {
     }
 
     // AMBILIGHT
-	this.status_url_ambilight = this.base_url + "/ambilight/power";
+    this.status_url_ambilight = this.base_url + "/ambilight/power";
 
-	this.on_url_ambilight = this.base_url + "/ambilight/currentconfiguration";
-	this.on_body_ambilight = JSON.stringify({
-		"styleName": "FOLLOW_VIDEO",
-		"isExpert": false,
-		"menuSetting": "NATURAL"
-	});
+    this.on_url_ambilight = this.base_url + "/ambilight/currentconfiguration";
+    this.on_body_ambilight = JSON.stringify({
+        "styleName": "FOLLOW_VIDEO",
+        "isExpert": false,
+        "menuSetting": "NATURAL"
+    });
 
-	this.off_url_ambilight = this.status_url_ambilight
-	this.off_body_ambilight = JSON.stringify({
-		"power": "Off"
-	});
+    this.off_url_ambilight = this.status_url_ambilight
+    this.off_body_ambilight = JSON.stringify({
+        "power": "Off"
+    });
 }
 
 /////////////////////////////
 
 HttpStatusAccessory.prototype = {
 
-	// Sometime the API fail, all calls should use a retry method, not used yet but goal is to replace all the XLoop function by this generic one
-    httpRequest_with_retry: function(url, body, method, need_authentication, retry_count, callback) {
-        this.httpRequest(url, body, method, need_authentication, function(error, response, responseBody) {
+    // Sometime the API fail, all calls should use a retry method, not used yet but goal is to replace all the XLoop function by this generic one
+    httpRequest_with_retry: function (url, body, method, need_authentication, retry_count, callback) {
+        this.httpRequest(url, body, method, need_authentication, function (error, response, responseBody) {
             if (error) {
                 if (retry_count > 0) {
                     this.log('Got error, will retry: ', retry_count, ' time(s)');
-                    this.httpRequest_with_retry(url, body, method, need_authentication, retry_count - 1, function(err) {
+                    this.httpRequest_with_retry(url, body, method, need_authentication, retry_count - 1, function (err) {
                         callback(err);
                     });
                 } else {
@@ -161,7 +161,7 @@ HttpStatusAccessory.prototype = {
         }.bind(this));
     },
 
-    httpRequest: function(url, body, method, need_authentication, callback) {
+    httpRequest: function (url, body, method, need_authentication, callback) {
         var options = {
             url: url,
             body: body,
@@ -182,13 +182,13 @@ HttpStatusAccessory.prototype = {
         }
 
         req = request(options,
-            function(error, response, body) {
+            function (error, response, body) {
                 callback(error, response, body)
-        	}
+            }
         );
     },
 
-    wolRequest: function(url, callback) {
+    wolRequest: function (url, callback) {
         this.log('calling WOL with URL %s', url);
         if (!url) {
             callback(null, "EMPTY");
@@ -198,7 +198,7 @@ HttpStatusAccessory.prototype = {
             //Wake on lan request
             var macAddress = url.replace(/^WOL[:]?[\/]?[\/]?/ig, "");
             this.log("Excuting WakeOnLan request to " + macAddress);
-            wol.wake(macAddress, function(error) {
+            wol.wake(macAddress, function (error) {
                 if (error) {
                     callback(error);
                 } else {
@@ -215,14 +215,14 @@ HttpStatusAccessory.prototype = {
     },
 
     // POWER FUNCTIONS -----------------------------------------------------------------------------------------------------------
-    setPowerStateLoop: function(nCount, url, body, powerState, callback) {
+    setPowerStateLoop: function (nCount, url, body, powerState, callback) {
         var that = this;
 
-        that.httpRequest(url, body, "POST", this.need_authentication, function(error, response, responseBody) {
+        that.httpRequest(url, body, "POST", this.need_authentication, function (error, response, responseBody) {
             if (error) {
                 if (nCount > 0) {
                     that.log('setPowerStateLoop - powerstate attempt, attempt id: ', nCount - 1);
-                    that.setPowerStateLoop(nCount - 1, url, body, powerState, function(err, state_power) {
+                    that.setPowerStateLoop(nCount - 1, url, body, powerState, function (err, state_power) {
                         callback(err, state_power);
                     });
                 } else {
@@ -237,16 +237,16 @@ HttpStatusAccessory.prototype = {
         });
     },
 
-    setPowerState: function(powerState, callback, context) {
+    setPowerState: function (powerState, callback, context) {
         var url = this.power_url;
         var body;
         var that = this;
 
-		this.log.debug("Entering %s with context: %s and target value: %s", arguments.callee.name, context, powerState);
+        this.log.debug("Entering %s with context: %s and target value: %s", arguments.callee.name, context, powerState);
 
         if (context && context == "statuspoll") {
-				callback(null, powerState);
-				return;
+            callback(null, powerState);
+            return;
         }
 
         this.set_attempt = this.set_attempt + 1;
@@ -258,30 +258,30 @@ HttpStatusAccessory.prototype = {
             }
             body = this.power_on_body;
             this.log("setPowerState - Will power on");
-			// If Mac Addr for WOL is set
-			if (this.wol_url) {
-				that.log('setPowerState - Sending WOL');
-				this.wolRequest(this.wol_url, function(error, response) {
-					that.log('setPowerState - WOL callback response: %s', response);
-					that.log('setPowerState - powerstate attempt, attempt id: ', 8);
-					//execute the callback immediately, to give control back to homekit
-					callback(error, that.state_power);
-					that.setPowerStateLoop(8, url, body, powerState, function(error, state_power) {
-						that.state_power = state_power;
-						if (error) {
-							that.state_power = false;
-							that.log("setPowerStateLoop - ERROR: %s", error);
-							if (that.switchService) {
-								that.switchService.getCharacteristic(Characteristic.On).setValue(that.state_power, null, "statuspoll");
-							}
-						}
-					});
-				}.bind(this));
-			}
+            // If Mac Addr for WOL is set
+            if (this.wol_url) {
+                that.log('setPowerState - Sending WOL');
+                this.wolRequest(this.wol_url, function (error, response) {
+                    that.log('setPowerState - WOL callback response: %s', response);
+                    that.log('setPowerState - powerstate attempt, attempt id: ', 8);
+                    //execute the callback immediately, to give control back to homekit
+                    callback(error, that.state_power);
+                    that.setPowerStateLoop(8, url, body, powerState, function (error, state_power) {
+                        that.state_power = state_power;
+                        if (error) {
+                            that.state_power = false;
+                            that.log("setPowerStateLoop - ERROR: %s", error);
+                            if (that.switchService) {
+                                that.switchService.getCharacteristic(Characteristic.On).setValue(that.state_power, null, "statuspoll");
+                            }
+                        }
+                    });
+                }.bind(this));
+            }
         } else {
             body = this.power_off_body;
             this.log("setPowerState - Will power off");
-            that.setPowerStateLoop(0, url, body, powerState, function(error, state_power) {
+            that.setPowerStateLoop(0, url, body, powerState, function (error, state_power) {
                 that.state_power = state_power;
                 if (error) {
                     that.state_power = false;
@@ -294,7 +294,7 @@ HttpStatusAccessory.prototype = {
                     that.state_ambilight = false;
                     that.ambilightService.getCharacteristic(Characteristic.On).setValue(that.state_ambilight, null, "statuspoll");
                 }
-                 if (that.volumeService) {
+                if (that.volumeService) {
                     that.state_volume = false;
                     that.volumeService.getCharacteristic(Characteristic.On).setValue(that.state_volume, null, "statuspoll");
                 }
@@ -303,23 +303,23 @@ HttpStatusAccessory.prototype = {
         }
     },
 
-    getPowerState: function(callback, context) {
+    getPowerState: function (callback, context) {
         var that = this;
         var url = this.power_url;
 
         that.log("getPowerState with : %s", url);
-   		this.log.debug("Entering %s with context: %s and current value: %s", arguments.callee.name, context, this.state_power);
+        this.log.debug("Entering %s with context: %s and current value: %s", arguments.callee.name, context, this.state_power);
         //if context is statuspoll, then we need to request the actual value else we return the cached value
-		if ((!context || context != "statuspoll") && this.switchHandling == "poll") {
+        if ((!context || context != "statuspoll") && this.switchHandling == "poll") {
             callback(null, this.state_power);
             return;
         }
 
-        this.httpRequest(url, "", "GET", this.need_authentication, function(error, response, responseBody) {
+        this.httpRequest(url, "", "GET", this.need_authentication, function (error, response, responseBody) {
             var tResp = that.state_power;
             var fctname = "getPowerState";
             if (error) {
-				that.log("getPowerState with : %s", url);
+                that.log("getPowerState with : %s", url);
                 that.log('%s - ERROR: %s', fctname, error.message);
                 that.state_power = false;
             } else {
@@ -328,19 +328,19 @@ HttpStatusAccessory.prototype = {
                     try {
                         responseBodyParsed = JSON.parse(responseBody);
                         if (responseBodyParsed && responseBodyParsed.powerstate) {
-                        	tResp = (responseBodyParsed.powerstate == "On") ? 1 : 0;
-						} else {
-		                    that.log("%s - Could not parse message: '%s', not updating state", fctname, responseBody);
-						}
+                            tResp = (responseBodyParsed.powerstate == "On") ? 1 : 0;
+                        } else {
+                            that.log("%s - Could not parse message: '%s', not updating state", fctname, responseBody);
+                        }
                     } catch (e) {
-						that.log("getPowerState with : %s", url);
+                        that.log("getPowerState with : %s", url);
                         that.log("%s - Got non JSON answer - not updating state: '%s'", fctname, responseBody);
-			responseBodyParsed = false;
+                        responseBodyParsed = false;
                     }
                 }
                 if (that.state_power != tResp) {
                     that.log('%s - Level changed to: %s', fctname, tResp);
-	                that.state_power = tResp;
+                    that.state_power = tResp;
                 }
             }
             callback(null, that.state_power);
@@ -348,7 +348,7 @@ HttpStatusAccessory.prototype = {
     },
 
     /// Send a key  -----------------------------------------------------------------------------------------------------------
-    sendKey: function(key, callback, context) {
+    sendKey: function (key, callback, context) {
         this.log("Entering %s with context: %s and target value: %s", arguments.callee.name, context, key);
 
         var keyName = null;
@@ -377,8 +377,8 @@ HttpStatusAccessory.prototype = {
         }
         if (keyName != null) {
             url = this.input_url;
-            body = JSON.stringify({"key": keyName});
-            this.httpRequest(url, body, "POST", this.need_authentication, function(error, response, responseBody) {
+            body = JSON.stringify({ "key": keyName });
+            this.httpRequest(url, body, "POST", this.need_authentication, function (error, response, responseBody) {
                 if (error) {
                     this.log('sendKey - error: ', error.message);
                 } else {
@@ -389,196 +389,169 @@ HttpStatusAccessory.prototype = {
         callback(null, null);
     },
 
-   /// Next input  -----------------------------------------------------------------------------------------------------------
-    setNextInput: function(inputState, callback, context)
-    {
+    /// Next input  -----------------------------------------------------------------------------------------------------------
+    setNextInput: function (inputState, callback, context) {
         this.log.debug("Entering %s with context: %s and target value: %s", arguments.callee.name, context, inputState);
 
         url = this.input_url;
-        body = JSON.stringify({"key": "Source"});
-        this.httpRequest(url, body, "POST", this.need_authentication, function(error, response, responseBody)
-        {
-            if (error)
-            {
+        body = JSON.stringify({ "key": "Source" });
+        this.httpRequest(url, body, "POST", this.need_authentication, function (error, response, responseBody) {
+            if (error) {
                 this.log('setNextInput - error: ', error.message);
             }
-            else
-            {
+            else {
                 this.log('Source - succeeded - current state: %s', inputState);
 
-                setTimeout(function ()
-                {
-                    body = JSON.stringify({"key": "CursorDown"});
+                setTimeout(function () {
+                    body = JSON.stringify({ "key": "CursorDown" });
 
-                    this.httpRequest(url, body, "POST", this.need_authentication, function(error, response, responseBody)
-                    {
-                        if (error)
-                        {
-                             this.log('setNextInput - error: ', error.message);
+                    this.httpRequest(url, body, "POST", this.need_authentication, function (error, response, responseBody) {
+                        if (error) {
+                            this.log('setNextInput - error: ', error.message);
                         }
-                        else
-                        {
+                        else {
                             this.log('Down - succeeded - current state: %s', inputState);
-                            setTimeout(function()
-                            {
-                                body = JSON.stringify({"key": "Confirm"});
+                            setTimeout(function () {
+                                body = JSON.stringify({ "key": "Confirm" });
 
-                                this.httpRequest(url, body, "POST", this.need_authentication, function(error, response, responseBody)
-                                {
-                                    if (error)
-                                    {
+                                this.httpRequest(url, body, "POST", this.need_authentication, function (error, response, responseBody) {
+                                    if (error) {
                                         this.log('setNextInput - error: ', error.message);
                                     }
-                                    else
-                                    {
+                                    else {
                                         this.log.info("Source change completed");
                                     }
                                 }.bind(this));
                             }.bind(this), 800);
                         }
                     }.bind(this));
-				}.bind(this), 800);
+                }.bind(this), 800);
             }
         }.bind(this));
         callback(null, null);
     },
 
-    getNextInput: function(callback, context) {
+    getNextInput: function (callback, context) {
         callback(null, null);
     },
 
-   /// Previous input  -----------------------------------------------------------------------------------------------------------
-    setPreviousInput: function(inputState, callback, context)
-    {
+    /// Previous input  -----------------------------------------------------------------------------------------------------------
+    setPreviousInput: function (inputState, callback, context) {
         this.log.debug("Entering %s with context: %s and target value: %s", arguments.callee.name, context, inputState);
 
         url = this.input_url;
-        body = JSON.stringify({"key": "Source"});
-        this.httpRequest(url, body, "POST", this.need_authentication, function(error, response, responseBody)
-        {
-            if (error)
-            {
+        body = JSON.stringify({ "key": "Source" });
+        this.httpRequest(url, body, "POST", this.need_authentication, function (error, response, responseBody) {
+            if (error) {
                 this.log('setPreviousInput - error: ', error.message);
             }
-            else
-            {
+            else {
                 this.log('Source - succeeded - current state: %s', inputState);
 
-                setTimeout(function ()
-                {
-                    body = JSON.stringify({"key": "CursorUp"});
+                setTimeout(function () {
+                    body = JSON.stringify({ "key": "CursorUp" });
 
-                    this.httpRequest(url, body, "POST", this.need_authentication, function(error, response, responseBody)
-                    {
-                        if (error)
-                        {
-                             this.log('setPreviousInput - error: ', error.message);
+                    this.httpRequest(url, body, "POST", this.need_authentication, function (error, response, responseBody) {
+                        if (error) {
+                            this.log('setPreviousInput - error: ', error.message);
                         }
-                        else
-                        {
+                        else {
                             this.log('Down - succeeded - current state: %s', inputState);
-                            setTimeout(function()
-                            {
-                                body = JSON.stringify({"key": "Confirm"});
+                            setTimeout(function () {
+                                body = JSON.stringify({ "key": "Confirm" });
 
-                                this.httpRequest(url, body, "POST", this.need_authentication, function(error, response, responseBody)
-                                {
-                                    if (error)
-                                    {
+                                this.httpRequest(url, body, "POST", this.need_authentication, function (error, response, responseBody) {
+                                    if (error) {
                                         this.log('setPreviousInput - error: ', error.message);
                                     }
-                                    else
-                                    {
+                                    else {
                                         this.log.info("Source change completed");
                                     }
                                 }.bind(this));
                             }.bind(this), 800);
                         }
                     }.bind(this));
-				}.bind(this), 800);
+                }.bind(this), 800);
             }
         }.bind(this));
         callback(null, null);
     },
 
-    getPreviousInput: function(callback, context) {
+    getPreviousInput: function (callback, context) {
         callback(null, null);
     },
 
-    identify: function(callback) {
+    identify: function (callback) {
         this.log("Identify requested!");
         callback(); // success
     },
 
-    setAmbilightState: function(ambilightState, callback, context) {
-		var that = this;
+    setAmbilightState: function (ambilightState, callback, context) {
+        var that = this;
 
-		//if context is statuspoll, then we need to ensure that we do not set the actual value
-		if (context && context == "statuspoll") {
-			callback(null, ambilightState);
-			return;
-		}
+        //if context is statuspoll, then we need to ensure that we do not set the actual value
+        if (context && context == "statuspoll") {
+            callback(null, ambilightState);
+            return;
+        }
 
         var url = (ambilightState) ? this.on_url_ambilight : this.off_url_ambilight;
-		var body = (ambilightState) ? this.on_body_ambilight : this.off_body_ambilight;
+        var body = (ambilightState) ? this.on_body_ambilight : this.off_body_ambilight;
         that.log("setAmbilightState - setting state to %s", ambilightState ? "ON" : "OFF");
-        that.httpRequest(url, body, "POST", this.need_authentication, function(error, response, responseBody) 
-        {
+        that.httpRequest(url, body, "POST", this.need_authentication, function (error, response, responseBody) {
             if (error) {
-				that.log('setAmbilightState - failed: %s', error.message);
-				callback(new Error("HTTP attempt failed"), false);
+                that.log('setAmbilightState - failed: %s', error.message);
+                callback(new Error("HTTP attempt failed"), false);
             } else {
                 that.log('setAmbilightState - succeeded - current state: %s', ambilightState);
                 callback(null, ambilightState);
             }
         });
-	},
+    },
 
-	getAmbilightState: function(callback, context) {
-		var that = this;
-		//if context is not statuspoll, then we need to get the stored value
-		if ((!context || context != "statuspoll_ambilight") && this.switchHandling == "poll") {
-			callback(null, this.state_ambilight);
-			return;
-		}
-        that.httpRequest(this.status_url_ambilight, "", "GET", this.need_authentication, function(error, response, responseBody) 
-        {
-			var powerState = 0;
-			if (!error) {
-				if (responseBody) {
+    getAmbilightState: function (callback, context) {
+        var that = this;
+        //if context is not statuspoll, then we need to get the stored value
+        if ((!context || context != "statuspoll_ambilight") && this.switchHandling == "poll") {
+            callback(null, this.state_ambilight);
+            return;
+        }
+        that.httpRequest(this.status_url_ambilight, "", "GET", this.need_authentication, function (error, response, responseBody) {
+            var powerState = 0;
+            if (!error) {
+                if (responseBody) {
                     var responseBodyParsed = JSON.parse(responseBody);
                     console.log(responseBodyParsed)
-					if (responseBodyParsed && responseBodyParsed.power) {
+                    if (responseBodyParsed && responseBodyParsed.power) {
                         powerState = (responseBodyParsed.power == "On") ? 1 : 0;
-                        
-                    that.httpRequest(this.on_url_ambilight, "", "GET", this.need_authentication, function(error, response, responseBody) {
-                            if (!error) {
-                                if (responseBody) {
-                                    var responseBodyParsed = JSON.parse(responseBody);
-                                    console.log(responseBodyParsed)
+                        setTimeout(function () {
+                            this.httpRequest(this.on_url_ambilight, "", "GET", this.need_authentication, function (error, response, responseBody) {
+                                if (!error) {
+                                    if (responseBody) {
+                                        var responseBodyParsed = JSON.parse(responseBody);
+                                        console.log(responseBodyParsed)
+                                    }
                                 }
-                            }
-                        });
-                    // .bind(this));
-                    callback()
+                                //callback()
+                            }.bind(this));
+                        }.bind(this), 800);
                     }
-                
-				}
-			} else {
-				that.log('getAmbilightState - actual mode - failed: %s', error.message);
-			}
 
-			if (that.state_ambilight != powerState) {
-				that.log('getAmbilightState - statechange to: %s', powerState);
-			}
+                }
+            } else {
+                that.log('getAmbilightState - actual mode - failed: %s', error.message);
+            }
 
-			that.state_ambilight = powerState;
-			callback(null, powerState);
-		}.bind(this));
+            if (that.state_ambilight != powerState) {
+                that.log('getAmbilightState - statechange to: %s', powerState);
+            }
+
+            that.state_ambilight = powerState;
+            callback(null, powerState);
+        }.bind(this));
     },
-    
-    getServices: function()
-    {
+
+    getServices: function () {
         var that = this;
 
         var informationService = new Service.AccessoryInformation();
@@ -586,12 +559,12 @@ HttpStatusAccessory.prototype = {
             .setCharacteristic(Characteristic.Name, this.name)
             .setCharacteristic(Characteristic.Manufacturer, 'Philips')
             .setCharacteristic(Characteristic.Model, this.model_name)
-			.setCharacteristic(Characteristic.FirmwareRevision, this.model_version)
-			.setCharacteristic(Characteristic.SerialNumber, this.model_serial_no);
+            .setCharacteristic(Characteristic.FirmwareRevision, this.model_version)
+            .setCharacteristic(Characteristic.SerialNumber, this.model_serial_no);
 
 
         this.televisionService = new Service.Television();
-	    this.televisionService
+        this.televisionService
             .setCharacteristic(Characteristic.ConfiguredName, this.name);
 
         // POWER
@@ -602,8 +575,8 @@ HttpStatusAccessory.prototype = {
 
         this.televisionService
             .setCharacteristic(
-                 Characteristic.SleepDiscoveryMode,
-                 Characteristic.SleepDiscoveryMode.ALWAYS_DISCOVERABLE
+                Characteristic.SleepDiscoveryMode,
+                Characteristic.SleepDiscoveryMode.ALWAYS_DISCOVERABLE
             );
 
         this.televisionService
@@ -629,7 +602,7 @@ HttpStatusAccessory.prototype = {
         //     .getCharacteristic(Characteristic.On)
         //     .on('get', this.getPreviousInput.bind(this))
         //     .on('set', this.setPreviousInput.bind(this));
-        
+
         // AMBILIGHT
         this.ambilightService = new Service.Lightbulb(this.name + " Ambilight");
         this.ambilightService
