@@ -551,15 +551,15 @@ HttpStatusAccessory.prototype = {
 					if (responseBodyParsed && responseBodyParsed.power) {
                         powerState = (responseBodyParsed.power == "On") ? 1 : 0;
                         
-                        that.httpRequest(this.on_url_ambilight, "", "GET", this.need_authentication, function(error, response, responseBody) {
-                            if (!error) {
-                                if (responseBody) {
-                                    var responseBodyParsed = JSON.parse(responseBody);
-                                    console.log(responseBodyParsed)
-                                }
-                            }
-                        }
-                    .bind(this));
+                    //     that.httpRequest(this.on_url_ambilight, "", "GET", this.need_authentication, function(error, response, responseBody) {
+                    //         if (!error) {
+                    //             if (responseBody) {
+                    //                 var responseBodyParsed = JSON.parse(responseBody);
+                    //                 console.log(responseBodyParsed)
+                    //             }
+                    //         }
+                    //     }
+                    // .bind(this));
                 }
                 
 				}
